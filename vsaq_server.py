@@ -15,6 +15,7 @@
 """Runs a test server for VSAQ."""
 
 
+
 import BaseHTTPServer
 import cgi
 import fnmatch
@@ -24,10 +25,7 @@ import re
 import SimpleHTTPServer
 import sys
 
-PORT = 9000
-if len(sys.argv) > 1:
-  PORT = int(sys.argv[1])
-
+PORT = int(sys.argv[1]) if len(sys.argv) > 1 else 9000
 server_address = ("127.0.0.1", PORT)
 
 #./ do.sh testserver generates the file
@@ -56,8 +54,8 @@ class TestServerRequestHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
   def get_test_files(self):
     test_files = []
     for root, _, files in os.walk("vsaq/"):
-      for f in fnmatch.filter(files, "*test_dom.html"):
-        test_files.append(os.path.join(root, f))
+      test_files.extend(
+          os.path.join(root, f) for f in fnmatch.filter(files, "*test_dom.html"))
     return test_files
 
   def generate_all_tests_file(self):
